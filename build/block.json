@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ctlt/query-custom-field-filter",
+  "version": "0.1.0",
+  "title": "Query Filter - Custom Field",
+  "category": "widgets",
+  "icon": "filter",
+  "description": "Add custom field filtering to the WP Query block.",
+  "example": {},
+  "supports": {
+    "interactivity": true
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "default": "All"
+    },
+    "instanceId": {
+      "type": "number",
+      "default": null
+    },
+    "selectedField": {
+      "type": "string",
+      "default": ""
+    },
+    "inputType": {
+      "type": "string",
+      "default": "select"
+    }
+  },
+  "usesContext": [
+    "queryId"
+  ],
+  "textdomain": "query-custom-field-filter",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php",
+  "viewScriptModule": "file:./view.js"
+}

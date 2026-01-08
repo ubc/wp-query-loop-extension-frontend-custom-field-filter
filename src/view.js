@@ -53,7 +53,7 @@ store( 'ctlt-query-custom-field-filter', {
 			const queryRef = ref.closest(
 				'.wp-block-query[data-wp-router-region]'
 				);
-console.log(ref);
+
 			const { actions } = yield import(
 				'@wordpress/interactivity-router'
 			);

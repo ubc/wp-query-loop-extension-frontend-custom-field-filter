@@ -11,21 +11,33 @@
  * @package query-taxonomy-filters
  */
 
-$label                 = $attributes['label'];
-$selected_field        = $attributes['selectedField'];
-$identifier            = 'query-' . $block->context['queryId'] . '-cf-' . $attributes['instanceId'];
-$selected_custom_field = isset( $_GET[ $identifier ] ) && ! empty( $_GET[ $identifier ] ) ? sanitize_text_field( wp_unslash( $_GET[ $identifier ] ) ) : '';
-$input_type            = sanitize_text_field( $attributes['inputType'] );
+$label          = $attributes['label'];
+$selected_field = $attributes['selectedField'];
+$identifier     = 'query-' . $block->context['queryId'] . '-cf-' . $attributes['instanceId'];
+$input_type     = sanitize_text_field( $attributes['inputType'] );
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 if ( isset( $_GET[ $identifier ] ) && ! empty( $_GET[ $identifier ] ) ) {
-	$selected_custom_field = explode( ',', wp_unslash( trim( $_GET[ $identifier ] ) ) );
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended
+	$selected_custom_field_raw = explode( ',', wp_unslash( trim( $_GET[ $identifier ] ) ) );
+	$selected_custom_field_raw = array_map( 'sanitize_text_field', $selected_custom_field_raw );
+
+	// For select input type, use single value (first item or empty string).
+	// For checkboxes, use array.
+	if ( 'select' === $input_type ) {
+		$selected_custom_field = ! empty( $selected_custom_field_raw ) ? $selected_custom_field_raw[0] : '';
+	} else {
+		$selected_custom_field = $selected_custom_field_raw;
+	}
+} elseif ( 'select' === $input_type ) {
+	// For select input type, use empty string.
+	$selected_custom_field = '';
 } else {
+	// For checkboxes, use empty array.
 	$selected_custom_field = array();
 }
 
-$selected_custom_field = array_map( 'sanitize_text_field', $selected_custom_field );
-
-$conext = array(
+$context = array(
 	'selected' => $selected_custom_field,
 );
 
@@ -46,7 +58,7 @@ $custom_field_values = $wpdb->get_col(
 	data-wp-interactive="ctlt-query-custom-field-filter"
 	data-wp-watch="callbacks.navigateToDestination"
 	filter-id="<?php echo esc_attr( $attributes['instanceId'] ); ?>"
-	<?php echo wp_interactivity_data_wp_context( $conext ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> 
+	<?php echo wp_interactivity_data_wp_context( $context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> 
 >
 	<?php if ( 'select' === $input_type ) : ?>
 		<select
@@ -58,6 +70,7 @@ $custom_field_values = $wpdb->get_col(
 		<?php foreach ( $custom_field_values as $key => $custom_field_value ) : ?>
 			<option
 				value="<?php echo esc_attr( $custom_field_value ); ?>"
+				<?php selected( $selected_custom_field, $custom_field_value ); ?>
 			>
 				<?php echo esc_html( $custom_field_value ); ?>
 			</option>
@@ -75,7 +88,7 @@ $custom_field_values = $wpdb->get_col(
 							value="<?php echo esc_attr( $custom_field_value ); ?>"
 							data-wp-on--change="actions.onChangeField"
 							class="wp-query-filter__checkbox"
-							<?php checked( in_array( $custom_field_value, $selected_custom_field ) ); ?>
+							<?php checked( in_array( $custom_field_value, $selected_custom_field, true ) ); ?>
 						/>
 						<?php echo esc_html( $custom_field_value ); ?>
 					</label>

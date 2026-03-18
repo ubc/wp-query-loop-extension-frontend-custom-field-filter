@@ -11,10 +11,17 @@
  * @package query-taxonomy-filters
  */
 
-$label          = $attributes['label'];
-$selected_field = $attributes['selectedField'];
-$identifier     = 'query-' . $block->context['queryId'] . '-cf-' . $attributes['instanceId'];
-$input_type     = sanitize_text_field( $attributes['inputType'] );
+$label            = $attributes['label'];
+$selected_field   = $attributes['selectedField'];
+$identifier       = 'query-' . $block->context['queryId'] . '-cf-' . $attributes['instanceId'];
+$input_type       = sanitize_text_field( $attributes['inputType'] );
+$accessible_label = ! empty( $attributes['accessibleLabel'] ) ? sanitize_text_field( $attributes['accessibleLabel'] ) : '';
+
+if ( ! empty( $accessible_label ) ) {
+	$computed_label = $accessible_label;
+} else {
+	$computed_label = 'Filter by ' . ucwords( str_replace( '_', ' ', $selected_field ) );
+}
 
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 if ( isset( $_GET[ $identifier ] ) && ! empty( $_GET[ $identifier ] ) ) {
@@ -60,11 +67,15 @@ $custom_field_values = $wpdb->get_col(
 	filter-id="<?php echo esc_attr( $attributes['instanceId'] ); ?>"
 	<?php echo wp_interactivity_data_wp_context( $context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> 
 >
+	<div class="live-region screen-reader-text" aria-live="polite" aria-atomic="true"></div>
 	<?php if ( 'select' === $input_type ) : ?>
+		<label for="<?php echo esc_attr( $identifier ); ?>" class="screen-reader-text"><?php echo esc_html( $computed_label ); ?></label>
 		<select
 			data-wp-on--change="actions.onChangeField"
 			data-wp-bind--value="context.selected"
 			class="wp-query-filter__select"
+			id="<?php echo esc_attr( $identifier ); ?>"
+			aria-label="<?php echo esc_attr( $computed_label ); ?>"
 	>
 		<option value=""><?php echo esc_html( $label ); ?></option>
 		<?php foreach ( $custom_field_values as $key => $custom_field_value ) : ?>
@@ -79,11 +90,13 @@ $custom_field_values = $wpdb->get_col(
 	<?php else : ?>
 		<div class="wp-query-filter__checkboxes">
 			<fieldset>
-				<legend class="wp-query-filter__legend visually-hidden">Custom Field Filter, available values in below list.</legend>
+				<legend class="wp-query-filter__legend screen-reader-text"><?php echo esc_html( $computed_label ); ?></legend>
 			<?php foreach ( $custom_field_values as $key => $custom_field_value ) : ?>
-					<label>
+					<label for="<?php echo esc_attr( $identifier . '-checkbox-' . $custom_field_value ); ?>">
 						<input
 							type="checkbox"
+							id="<?php echo esc_attr( $identifier . '-checkbox-' . $custom_field_value ); ?>"
+							aria-label="<?php echo esc_attr( $custom_field_value ); ?>"
 							name="<?php echo esc_attr( 'query-' . $attributes['instanceId'] . '-custom-field[]' ); ?>"
 							value="<?php echo esc_attr( $custom_field_value ); ?>"
 							data-wp-on--change="actions.onChangeField"

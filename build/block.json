@@ -12,6 +12,10 @@
     "interactivity": true
   },
   "attributes": {
+    "accessibleLabel": {
+      "type": "string",
+      "default": ""
+    },
     "label": {
       "type": "string",
       "default": "All"

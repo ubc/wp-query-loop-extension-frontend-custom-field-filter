@@ -14,7 +14,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useInstanceId } from '@wordpress/compose';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { PanelBody, SelectControl } from '@wordpress/components';
+import { PanelBody, SelectControl, TextControl } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { useEffect, useState } from '@wordpress/element';
 
@@ -32,7 +32,7 @@ import { useEffect, useState } from '@wordpress/element';
  */
 export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps();
-	const { instanceId, label, selectedField, inputType } = attributes;
+	const { instanceId, label, selectedField, inputType, accessibleLabel } = attributes;
 	const newInstanceId = useInstanceId( Edit );
 	const [ metaKeys, setMetaKeys ] = useState([]);
 
@@ -84,24 +84,31 @@ export default function Edit( { attributes, setAttributes } ) {
 								label="Custom Field Name"
 								value={ selectedField }
 								options={ metaKeys.map(key => {
-								return {
-									label: key,
-									value: key
-								};
-							}) }
-							onChange={ ( newselectedField ) => {
-								setAttributes({
-									selectedField: newselectedField
-								});
-							} }
-							__nextHasNoMarginBottom
-						/>
-						<SelectControl
-							label="Input Type"
-							value={inputType}
-							options={inputTypes}
-							onChange={(newInputType) => {
+									return {
+										label: key,
+										value: key
+									};
+								}) }
+								onChange={ ( newselectedField ) => {
+									setAttributes({
+										selectedField: newselectedField
+									});
+								} }
+								__nextHasNoMarginBottom
+							/>
+							<SelectControl
+								label="Input Type"
+								value={inputType}
+								options={inputTypes}
+								onChange={(newInputType) => {
 									setAttributes({ inputType: newInputType });
+								}}
+							/>
+							<TextControl
+								label="Accessible Label"
+								value={accessibleLabel}
+								onChange={(newAccessibleLabel) => {
+									setAttributes({ accessibleLabel: newAccessibleLabel });
 								}}
 							/>
 						</Fragment>

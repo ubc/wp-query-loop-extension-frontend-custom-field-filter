@@ -5,6 +5,22 @@
  * Replace them with your own styles or remove the file completely.
  */
 
+body .wp-query-filter__select {
+    width: 100%;
+    max-width: 250px;
+    appearance: none;
+    padding: 5px 25px 5px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    box-sizing: border-box;
+    position: relative;
+    background: #fff url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E) no-repeat right 9px top 53%;
+    background-size: 15px;
+    height: 40px;
+}
+
 .wp-query-filter__checkboxes {
     label {
         display: flex;
@@ -26,4 +42,33 @@
     padding: 0;
     white-space: nowrap;
     clip-path: inset(100%);
+}
+
+/**
+ * While a filter navigation is in flight, dim the stale results and disable
+ * interaction with them. Layout is preserved (no jump/collapse). The dimming
+ * is a visual cue only — screen readers are informed via aria-busy and the
+ * interactivity router's built-in announcements (see view.js).
+ */
+.wp-block-query {
+
+    .wp-block-post-template,
+    .wp-block-query-no-results,
+    .wp-block-query-pagination {
+        transition: opacity 0.2s ease;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    &.is-loading-content {
+
+        .wp-block-post-template,
+        .wp-block-query-no-results,
+        .wp-block-query-pagination {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+    }
 }

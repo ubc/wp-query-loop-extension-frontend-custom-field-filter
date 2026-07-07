@@ -111,6 +111,13 @@ export default function Edit( { attributes, setAttributes } ) {
 									setAttributes({ accessibleLabel: newAccessibleLabel });
 								}}
 							/>
+							<TextControl
+								label="Default 'All' Label"
+								value={label}
+								onChange={(newLabel) => {
+									setAttributes({ label: newLabel });
+								}}
+							/>
 						</Fragment>
 					) : ''
 					}

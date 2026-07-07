@@ -17,7 +17,11 @@ const updateURLParameter = (url, urlParameters) => {
 
 const updateLiveRegion = ( element ) => {
 	const liveRegion = element.querySelector( '.live-region' );
-	
+
+	if ( ! liveRegion ) {
+		return;
+	}
+
 	// Screen readers often suppress announcements if the new text is identical to the old text.
 	// We alternate by adding a non-breaking space at the end to force a perceived change.
 	if ( liveRegion.textContent === "Content updated." ) {
@@ -43,7 +47,6 @@ store('ctlt-query-custom-field-filter', {
 				const checkedValues = document.querySelectorAll(`input[name="${checkboxName}"]:checked`);
 				// Add the checked values to the selecteds array
 				context.selected = Array.from(checkedValues).map(checkbox => checkbox.value);
-				console.log(context.selected);
 			} else {
 				context.selected = event.target.value;
 			}
@@ -79,7 +82,16 @@ store('ctlt-query-custom-field-filter', {
 				]
 			);
 
-			yield actions.navigate(navigateTo);
+			// Dim the existing results while the new content loads.
+			queryRef.classList.add('is-loading-content');
+			queryRef.setAttribute('aria-busy', 'true');
+
+			try {
+				yield actions.navigate(navigateTo);
+			} finally {
+				queryRef.classList.remove('is-loading-content');
+				queryRef.removeAttribute('aria-busy');
+			}
 
 			updateLiveRegion(ref);
 		},

@@ -65,7 +65,7 @@ $custom_field_values = $wpdb->get_col(
 	data-wp-interactive="ctlt-query-custom-field-filter"
 	data-wp-watch="callbacks.navigateToDestination"
 	filter-id="<?php echo esc_attr( $attributes['instanceId'] ); ?>"
-	<?php echo wp_interactivity_data_wp_context( $context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> 
+	<?php echo wp_interactivity_data_wp_context( $context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 >
 	<div class="live-region screen-reader-text" aria-live="polite" aria-atomic="true"></div>
 	<?php if ( 'select' === $input_type ) : ?>

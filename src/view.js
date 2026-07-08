@@ -3,7 +3,9 @@
  */
 import { store, getContext, getElement } from '@wordpress/interactivity';
 
-let didRunInitially = false;
+// Track initial mount per filter element (not globally), so every filter
+// skips its own first watch run instead of only the first filter on the page.
+const initialized = new WeakSet();
 
 const updateURLParameter = (url, urlParameters) => {
 	const newUrl = new URL(url);
@@ -61,9 +63,9 @@ store('ctlt-query-custom-field-filter', {
 				return;
 			}
 
-			if (!didRunInitially) {
-				didRunInitially = true;
-				return; // Skip the first run on node creation
+			if (!initialized.has(ref)) {
+				initialized.add(ref);
+				return; // Skip this element's first run on node creation
 			}
 
 			const queryRef = ref.closest(
